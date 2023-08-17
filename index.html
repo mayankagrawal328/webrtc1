@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="an"></div>
+    <input type="text" id="offer">
+    <button onclick="offer2()">submit</button>
+    <br>
+    <input type="text" id="offer1">
+    <button onclick="offer1()">submit</button>
+    <img src="" id="img">
+    <script>
+        let messaeg={},messaeg2={}
+        let mess1="",mess2="",mess="";
+    function offer2()
+    {
+        offer2=JSON.parse(document.getElementById('offer').value);
+        const remoteConnection2 = new RTCPeerConnection()
+
+        remoteConnection2.onicecandidate = e =>  {
+        console.log(" NEW ice candidnat!! on localconnection reprinting SDP " )
+        console.log("answer:",JSON.stringify(remoteConnection2.localDescription) )
+        document.getElementById('an').innerHTML = JSON.stringify(remoteConnection2.localDescription);
+        }
+
+
+        remoteConnection2.ondatachannel= e => {
+
+            const receiveChannel2 = e.channel;
+            receiveChannel2.onmessage =e =>{//  console.log("messsage received!!!"  + e.data )
+            console.log("m1")
+            try
+            { 
+                mess1=e.data
+                messaeg[mess1.substring(0,1)] = mess1.substring(1);
+            //     if(mess1.substring(0,1) in messaeg2)
+            // document.getElementById('img').src = "data:image/png;base64,"+JSON.parse(mess1.substring(1)+messaeg2[mess1.substring(0,1)]);
+            }
+            catch{}
+        }
+
+            receiveChannel2.onopen = e => console.log("open!!!!");
+            receiveChannel2.onclose =e => console.log("closed!!!!!!");
+            remoteConnection2.channel = receiveChannel2;
+
+        }
+
+
+        remoteConnection2.setRemoteDescription(offer2).then(a=>console.log("done"))
+
+        //create answer
+        /*await */remoteConnection2.createAnswer().then(a => remoteConnection2.setLocalDescription(a)).then(a=>
+        console.log(JSON.stringify(remoteConnection2.localDescription)))
+    }
+    function offer1()
+    {
+      const localConnection = new RTCPeerConnection() 
+        offer=JSON.parse(document.getElementById('offer1').value);
+        
+
+        remoteConnection.onicecandidate = e =>  {
+        console.log(" NEW ice candidnat!! on localconnection reprinting SDP " )
+        console.log("answer:",JSON.stringify(remoteConnection.localDescription) )
+        document.getElementById('an').innerHTML = JSON.stringify(remoteConnection.localDescription);
+        }
+
+
+        remoteConnection.ondatachannel= e => {
+
+            const receiveChannel = e.channel;
+            receiveChannel.onmessage =e =>{  //console.log("messsage received!!!"  + e.data )
+            console.log("m2")
+            try
+            { 
+                mess2=e.data
+                messaeg2[mess2.substring(0,1)] = mess2.substring(1);
+                     document.getElementById('img').src = JSON.parse(mess2);
+        //     if(mess2.substring(0,1) in messaeg)
+        //    { document.getElementById('img').src = "data:image/png;base64,"+JSON.parse(messaeg[mess2.substring(0,1)]+mess2.substring(1));
+        // mess=messaeg[mess2.substring(0,1)]+mess2.substring(1);
+        // }
+        // else{
+        //     document.getElementById('img').src = "data:image/png;base64,"+JSON.parse(mess);
+        // }
+            }
+            catch{}
+        }
+
+            receiveChannel.onopen = e => console.log("open!!!!");
+            receiveChannel.onclose =e => console.log("closed!!!!!!");
+            remoteConnection.channel = receiveChannel;
+
+        }
+
+
+        remoteConnection.setRemoteDescription(offer).then(a=>console.log("done"))
+
+        //create answer
+        /*await */remoteConnection.createAnswer().then(a => remoteConnection.setLocalDescription(a)).then(a=>
+        console.log(JSON.stringify(remoteConnection.localDescription)))
+    }
+    </script>
+</body>
+</html>
